@@ -10,7 +10,7 @@ import ToastContainer from '../toast/container';
 import ModalContainer from '../modal/container';
 import NotificationsBarContainer from '../notifications-bar/container';
 import AudioContainer from '../audio/container';
-import ChatNotificationContainer from '../chat/notification/container';
+import ChatAlertContainer from '../chat/alert/container';
 import { styles } from './styles';
 
 const MOBILE_MEDIA = 'only screen and (max-width: 40em)';
@@ -81,8 +81,12 @@ class App extends Component {
 
     const BROWSER_RESULTS = browser();
     const body = document.getElementsByTagName('body')[0];
-    body.classList.add(`browser-${BROWSER_RESULTS.name}`);
-    body.classList.add(`os-${BROWSER_RESULTS.os.split(' ').shift().toLowerCase()}`);
+    if (BROWSER_RESULTS && BROWSER_RESULTS.name) {
+      body.classList.add(`browser-${BROWSER_RESULTS.name}`);
+    }
+    if (BROWSER_RESULTS && BROWSER_RESULTS.os) {
+      body.classList.add(`os-${BROWSER_RESULTS.os.split(' ').shift().toLowerCase()}`);
+    }
 
     this.handleWindowResize();
     window.addEventListener('resize', this.handleWindowResize, false);
@@ -223,12 +227,9 @@ class App extends Component {
     const { chat } = this.props;
 
     // Variables for resizing chat.
-    const CHAT_MIN_WIDTH_PX = 180;
-    const CHAT_MAX_WIDTH_PX = 310;
-    const CHAT_DEFAULT_WIDTH_RELATIVE = 25;
-
-    // decide whether using pixel or percentage unit as a default width for chat
-    const CHAT_DEFAULT_WIDTH = (window.innerWidth * (CHAT_DEFAULT_WIDTH_RELATIVE / 100.0)) < CHAT_MAX_WIDTH_PX ? `${CHAT_DEFAULT_WIDTH_RELATIVE}%` : CHAT_MAX_WIDTH_PX;
+    const CHAT_MIN_WIDTH = '10%';
+    const CHAT_MAX_WIDTH = '25%';
+    const CHAT_DEFAULT_WIDTH = '15%';
 
     if (!chat) return null;
 
@@ -246,8 +247,8 @@ class App extends Component {
     return (
       <Resizable
         defaultSize={{ width: CHAT_DEFAULT_WIDTH }}
-        minWidth={CHAT_MIN_WIDTH_PX}
-        maxWidth={CHAT_MAX_WIDTH_PX}
+        minWidth={CHAT_MIN_WIDTH}
+        maxWidth={CHAT_MAX_WIDTH}
         ref={(node) => { this.resizableChat = node; }}
         className={styles.resizableChat}
         enable={resizableEnableOptions}
@@ -315,7 +316,7 @@ class App extends Component {
         <ModalContainer />
         <AudioContainer />
         <ToastContainer />
-        <ChatNotificationContainer currentChatID={params.chatID} />
+        <ChatAlertContainer currentChatID={params.chatID} />
       </main>
     );
   }
